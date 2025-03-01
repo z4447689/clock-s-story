@@ -48,6 +48,37 @@
     <textarea id="outputKeywords" readonly></textarea>
 
     <script>
+        const stopWords = ['的', '了', '是', '在', '和', '也', '有', '不', '我', '你', '他', '她', '它', '们'];
+
+        function preprocessText(text) {
+            // 清理特殊字符和标点符号
+            text = text.replace(/<[^>]*>/g, '').replace(/[^\w\s]/g, '');
+            // 统一为小写
+            text = text.toLowerCase();
+            return text;
+        }
+
+        function tokenize(text) {
+            // 简单分词，这里可以替换为更复杂的分词工具
+            return text.split(' ');
+        }
+
+        function removeStopWords(tokens) {
+            return tokens.filter(token =>!stopWords.includes(token));
+        }
+
+        function calculateTF(tokens) {
+            const tf = {};
+            tokens.forEach(token => {
+                if (!tf[token]) {
+                    tf[token] = 1;
+                } else {
+                    tf[token]++;
+                }
+            });
+            return tf;
+        }
+
         function extractKeywords() {
             const inputText = document.getElementById('inputText').value;
             const outputKeywords = document.getElementById('outputKeywords');
@@ -56,26 +87,18 @@
                 return;
             }
 
-            // 简单的分词逻辑，通过空格分割
-            const words = inputText.split(' ');
-            const wordCount = {};
-
-            // 统计每个词的出现频率
-            words.forEach(word => {
-                if (!wordCount[word]) {
-                    wordCount[word] = 1;
-                } else {
-                    wordCount[word]++;
-                }
-            });
+            const preprocessedText = preprocessText(inputText);
+            const tokens = tokenize(preprocessedText);
+            const filteredTokens = removeStopWords(tokens);
+            const tf = calculateTF(filteredTokens);
 
             // 将词频对象转换为数组，并按频率排序
-            const wordCountArray = Object.entries(wordCount).sort((a, b) => b[1] - a[1]);
+            const tfArray = Object.entries(tf).sort((a, b) => b[1] - a[1]);
 
             // 提取前几个高频词作为关键词
             const keywords = [];
-            for (let i = 0; i < Math.min(5, wordCountArray.length); i++) {
-                keywords.push(wordCountArray[i][0]);
+            for (let i = 0; i < Math.min(5, tfArray.length); i++) {
+                keywords.push(tfArray[i][0]);
             }
 
             outputKeywords.value = keywords.join(', ');
