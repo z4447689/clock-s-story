@@ -1,127 +1,87 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>幻想穿梭站</title>
+    <title>关键词捕捉网页</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 0;
         }
 
-        header {
-            background-color: rgba(0, 0, 0, 0.7);
-            text-align: center;
-            padding: 20px;
+        label {
+            display: block;
+            margin-top: 10px;
         }
 
-        nav {
-            background-color: rgba(0, 0, 0, 0.5);
-            text-align: center;
+        input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            margin-top: 5px;
         }
 
-        nav a {
-            color: #fff;
+        textarea {
+            width: 300px;
+            height: 150px;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
             padding: 10px 20px;
-            text-decoration: none;
-        }
-
-        section {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #home {
-            background-image: url('https://i.imgur.com/vq7747x.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #home h1 {
-            font-size: 4em;
-            color: #ffd700;
-        }
-
-        #home button {
-            font-size: 1.5em;
-            padding: 15px 30px;
-            background-color: #ff00ff;
-            color: #fff;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 3px;
             cursor: pointer;
-        }
-
-        #fairy-tale {
-            background-color: #ffdab9;
-        }
-
-        #magic {
-            background-color: #9370db;
-        }
-
-        #future {
-            background-color: #00bfff;
-        }
-
-        #scene-container {
-            width: 100%;
-            height: 400px;
-            background-color: #000;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        #scene-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>幻想穿梭站</h1>
-    </header>
-    <nav>
-        <a href="#home">首页</a>
-        <a href="#fairy-tale">童话区</a>
-        <a href="#magic">魔法空间</a>
-        <a href="#future">未来科技城</a>
-    </nav>
-    <section id="home">
-        <h1>开启奇幻之旅</h1>
-        <button onclick="startJourney()">选择穿梭</button>
-        <div id="scene-container"></div>
-    </section>
-    <section id="fairy-tale">
-        <h2>童话区</h2>
-        <p>这里满是活灵活现的童话角色，如会飞的兔子带着你在彩色蘑菇森林里穿梭找宝藏，还能与灰姑娘聊天。</p>
-    </section>
-    <section id="magic">
-        <h2>魔法空间</h2>
-        <p>有魔法学院，能学咒语，挥动虚拟魔杖施展魔法，制造烟花、召唤小精灵等。</p>
-    </section>
-    <section id="future">
-        <h2>未来科技城</h2>
-        <p>展示各种酷炫飞行器，你能操控时空车穿越到未来不同时间点，看未来人类生活。</p>
-    </section>
+    <label for="inputText">输入一段文字:</label>
+    <input type="text" id="inputText" />
+    <button onclick="extractKeywords()">获取关键词</button>
+    <label for="outputKeywords">关键词:</label>
+    <textarea id="outputKeywords" readonly></textarea>
+
     <script>
-        const sceneContainer = document.getElementById('scene-container');
-        const scenes = [
-            'https://via.placeholder.com/800x400?text=Fairy+Tale+Scene',
-            'https://via.placeholder.com/800x400?text=Magic+Scene',
-            'https://via.placeholder.com/800x400?text=Future+Scene'
-        ];
+        function extractKeywords() {
+            const inputText = document.getElementById('inputText').value;
+            const outputKeywords = document.getElementById('outputKeywords');
+            if (inputText.trim() === "") {
+                outputKeywords.value = "请输入有效文字";
+                return;
+            }
+
+            // 简单的分词逻辑，通过空格分割
+            const words = inputText.split(' ');
+            const wordCount = {};
+
+            // 统计每个词的出现频率
+            words.forEach(word => {
+                if (!wordCount[word]) {
+                    wordCount[word] = 1;
+                } else {
+                    wordCount[word]++;
+                }
+            });
+
+            // 将词频对象转换为数组，并按频率排序
+            const wordCountArray = Object.entries(wordCount).sort((a, b) => b[1] - a[1]);
+
+            // 提取前几个高频词作为关键词
+            const keywords = [];
+            for (let i = 0; i < Math.min(5, wordCountArray.length); i++) {
+                keywords.push(wordCountArray[i][0]);
+            }
+
+            outputKeywords.value = keywords.join(', ');
+        }
+    </script>
+
+</body>
+
+</html>
