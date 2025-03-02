@@ -1,78 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关键词生成句子</title>
+    <title>赞数据新闻专业</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
         }
 
-        label {
-            display: block;
-            margin-top: 10px;
+        h1 {
+            color: #333;
         }
 
-        input[type="text"] {
-            width: 300px;
-            padding: 8px;
-            margin-top: 5px;
-        }
-
-        textarea {
-            width: 300px;
-            height: 100px;
-            padding: 8px;
-            margin-top: 5px;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin-top: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
+        p {
+            font-size: 1.2em;
+            color: #666;
         }
     </style>
 </head>
 
 <body>
-    <label for="keywordInput">输入关键词:</label>
-    <input type="text" id="keywordInput">
-    <button onclick="generateSentence()">生成句子</button>
-    <label for="sentenceOutput">生成的句子:</label>
-    <textarea id="sentenceOutput" readonly></textarea>
-
-    <script>
-        function generateSentence() {
-            const keyword = document.getElementById('keywordInput').value;
-            const sentenceOutput = document.getElementById('sentenceOutput');
-            if (keyword.trim() === "") {
-                sentenceOutput.value = "请输入关键词";
-                return;
-            }
-            fetch('/generate_sentence', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ keyword: keyword })
-            })
-         .then(response => response.json())
-         .then(data => {
-                sentenceOutput.value = data.sentence;
-            })
-         .catch(error => {
-                console.error('Error:', error);
-                sentenceOutput.value = '生成句子时出错';
-            });
-        }
-    </script>
-
+    <h1>赞数据新闻专业</h1>
+    <p>数据新闻妙无穷，</p>
+    <p>融合文理趣意浓。</p>
+    <p>数字图表藏故事，</p>
+    <p>信息传播气势雄。</p>
+    <p>时代前沿展奇功。</p>
 </body>
 
 </html>
