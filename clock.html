@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>简易关键词提取</title>
+    <title>关键词生成句子</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
 
         textarea {
             width: 300px;
-            height: 150px;
+            height: 100px;
             padding: 8px;
             margin-top: 5px;
         }
@@ -41,61 +41,35 @@
 </head>
 
 <body>
-    <label for="inputText">输入一段话:</label>
-    <textarea id="inputText"></textarea>
-    <button onclick="extractKeywords()">提取关键词</button>
-    <label for="outputKeywords">关键词:</label>
-    <textarea id="outputKeywords" readonly></textarea>
+    <label for="keywordInput">输入关键词:</label>
+    <input type="text" id="keywordInput">
+    <button onclick="generateSentence()">生成句子</button>
+    <label for="sentenceOutput">生成的句子:</label>
+    <textarea id="sentenceOutput" readonly></textarea>
 
     <script>
-        const stopWords = ['the', 'and', 'is', 'of', 'to', 'in', 'for', 'a', 'an', 'it', 'this', 'that', 'with'];
-
-        function preprocessText(text) {
-            text = text.toLowerCase();
-            text = text.replace(/[^\w\s]/g, '');
-            return text;
-        }
-
-        function tokenize(text) {
-            return text.split(' ');
-        }
-
-        function removeStopWords(tokens) {
-            return tokens.filter(token =>!stopWords.includes(token));
-        }
-
-        function calculateTF(tokens) {
-            const tf = {};
-            tokens.forEach(token => {
-                if (!tf[token]) {
-                    tf[token] = 1;
-                } else {
-                    tf[token]++;
-                }
-            });
-            return tf;
-        }
-
-        function extractKeywords() {
-            const inputText = document.getElementById('inputText').value;
-            const outputKeywords = document.getElementById('outputKeywords');
-            if (inputText.trim() === "") {
-                outputKeywords.value = "请输入有效文字";
+        function generateSentence() {
+            const keyword = document.getElementById('keywordInput').value;
+            const sentenceOutput = document.getElementById('sentenceOutput');
+            if (keyword.trim() === "") {
+                sentenceOutput.value = "请输入关键词";
                 return;
             }
-
-            const preprocessedText = preprocessText(inputText);
-            const tokens = tokenize(preprocessedText);
-            const filteredTokens = removeStopWords(tokens);
-            const tf = calculateTF(filteredTokens);
-
-            const sortedTF = Object.entries(tf).sort((a, b) => b[1] - a[1]);
-            const topKeywords = [];
-            for (let i = 0; i < Math.min(5, sortedTF.length); i++) {
-                topKeywords.push(sortedTF[i][0]);
-            }
-
-            outputKeywords.value = topKeywords.join(', ');
+            fetch('/generate_sentence', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ keyword: keyword })
+            })
+         .then(response => response.json())
+         .then(data => {
+                sentenceOutput.value = data.sentence;
+            })
+         .catch(error => {
+                console.error('Error:', error);
+                sentenceOutput.value = '生成句子时出错';
+            });
         }
     </script>
 
