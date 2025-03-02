@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关键词捕捉网页</title>
+    <title>简易关键词提取</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,25 +41,22 @@
 </head>
 
 <body>
-    <label for="inputText">输入一段文字:</label>
-    <input type="text" id="inputText" />
-    <button onclick="extractKeywords()">获取关键词</button>
+    <label for="inputText">输入一段话:</label>
+    <textarea id="inputText"></textarea>
+    <button onclick="extractKeywords()">提取关键词</button>
     <label for="outputKeywords">关键词:</label>
     <textarea id="outputKeywords" readonly></textarea>
 
     <script>
-        const stopWords = ['的', '了', '是', '在', '和', '也', '有', '不', '我', '你', '他', '她', '它', '们'];
+        const stopWords = ['the', 'and', 'is', 'of', 'to', 'in', 'for', 'a', 'an', 'it', 'this', 'that', 'with'];
 
         function preprocessText(text) {
-            // 清理特殊字符和标点符号
-            text = text.replace(/<[^>]*>/g, '').replace(/[^\w\s]/g, '');
-            // 统一为小写
             text = text.toLowerCase();
+            text = text.replace(/[^\w\s]/g, '');
             return text;
         }
 
         function tokenize(text) {
-            // 简单分词，这里可以替换为更复杂的分词工具
             return text.split(' ');
         }
 
@@ -92,16 +89,13 @@
             const filteredTokens = removeStopWords(tokens);
             const tf = calculateTF(filteredTokens);
 
-            // 将词频对象转换为数组，并按频率排序
-            const tfArray = Object.entries(tf).sort((a, b) => b[1] - a[1]);
-
-            // 提取前几个高频词作为关键词
-            const keywords = [];
-            for (let i = 0; i < Math.min(5, tfArray.length); i++) {
-                keywords.push(tfArray[i][0]);
+            const sortedTF = Object.entries(tf).sort((a, b) => b[1] - a[1]);
+            const topKeywords = [];
+            for (let i = 0; i < Math.min(5, sortedTF.length); i++) {
+                topKeywords.push(sortedTF[i][0]);
             }
 
-            outputKeywords.value = keywords.join(', ');
+            outputKeywords.value = topKeywords.join(', ');
         }
     </script>
 
